@@ -21,11 +21,11 @@ ILLUMINACLIP:/opt/Trimmomatic-0.39/adapters/All_adapters.fa:2:30:10 \
 LEADING:0 TRAILING:0 SLIDINGWINDOW:4:0 HEADCROP:0
 
 3. Quality contol of filtered reads
-   
+
 fastqc -t 2 $1_R1_paired.fastq.gz $1_R2_paired.fastq.gz
 
 4. Assembly by SPAdes
-   
+ 
 /opt/SPAdes-3.15.4-Linux/bin/metaspades.py \
 -o ./Spades_assembly/$1 \
 -1 ./$1_R1_paired.fastq.gz \
