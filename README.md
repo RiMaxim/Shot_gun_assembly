@@ -10,6 +10,12 @@ fastqc -t $2 $1_1.fastq.gz $1_2.fastq.gz
 
 2. Filtration by trimmomatic:
 
+Among the 1,646 genomes:
+
+	•	1,086 genomes (1,085 from GTDB + 1 newly added), originating from 42 sponge species, were classified as HMA (High Microbial Abundance);
+ 
+	•	308 genomes (297 from GTDB + 11 newly added), from 50 sponge species (45 GTDB + 5 newly added), were classified as LMA (Low Microbial Abundance);
+ 
 	•	java -jar /opt/Trimmomatic-0.39/trimmomatic-0.39.jar PE -threads $2 -phred33 $1_1.fastq.gz $1_2.fastq.gz $1_R1_paired.fastq.gz $1_R1_unpaired.fastq.gz $1_R2_paired.fastq.gz $1_R2_unpaired.fastq.gz ILLUMINACLIP:/opt/Trimmomatic-0.39/adapters/All_adapters.fa:2:30:10 LEADING:0 TRAILING:0 SLIDINGWINDOW:4:0 HEADCROP:0
 
 3. Quality contol of filtered reads
