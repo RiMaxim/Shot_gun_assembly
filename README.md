@@ -4,11 +4,11 @@ $1 - sample name
 
 $2 - threads
 
-1. Quality contol of raw reads
+#1. Quality contol of raw reads
 
 fastqc -t $2 $1_1.fastq.gz $1_2.fastq.gz
 
-2. Filtration by trimmomatic:
+#2. Filtration by trimmomatic:
 java -jar /opt/Trimmomatic-0.39/trimmomatic-0.39.jar \
 PE \
 -threads $2 \
