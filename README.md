@@ -1,3 +1,5 @@
+![Logo](Pipeline.png)
+
 # Pipeline
 ```
 #$1 - sample name
