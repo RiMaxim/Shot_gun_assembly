@@ -34,7 +34,7 @@ fastqc -t 2 $1_R1_paired.fastq.gz $1_R2_paired.fastq.gz
 -m 1005 -t $2 -k 33,55,99
 
 5. Quast
-   
+
 /opt/quast/quast.py -t $2 -m 500 -l ./Spades_assembly/$1/contigs.fasta -o ./quast_results/$1 ./Spades_assembly/$1/contigs.fasta
 /opt/quast/quast.py -t $2 -m 5000 -l ./Spades_assembly/$1/contigs.fasta_5kb -o ./quast_results/$1_5kb ./Spades_assembly/$1/contigs.fasta
 
