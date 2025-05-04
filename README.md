@@ -256,8 +256,106 @@ virsorter run \
 
 #19. Run bwa-mem2
 
+/opt/bwa-mem2-2.2.1_x64-linux/bwa-mem2 index \
+./Spades_assembly/$1/contigs.fasta
+
+/opt/bwa-mem2-2.2.1_x64-linux/bwa-mem2 mem \
+-t $2 \
+./Spades_assembly/$1/contigs.fasta \
+$1_1.fastq.gz \
+$1_2.fastq.gz | \
+samtools sort -o ./bam/$1.bam -@ $2
 
 
+#20 Index bam file
+
+samtools index ./bam/$1.bam
 
 
+#21 Binning by SemiBin
 
+SemiBin2 single_easy_bin \
+-i ./Spades_assembly/$1/contigs.fasta \
+-b ./bam/$1.bam \
+-o ./SemiBin/$1/
+
+
+#22 Binning by metadecoder
+
+mkdir ./metadecoder/$1
+
+metadecoder seed \
+--threads $2 \
+-f ./Spades_assembly/$1/contigs.fasta \
+-o ./metadecoder/$1/METADECODER.SEED
+
+metadecoder coverage \
+-b ./bam/$1.bam \
+-o ./metadecoder/$1/METADECODER.COVERAGE
+
+metadecoder cluster \
+-f ./Spades_assembly/$1/contigs.fasta \
+-c ./metadecoder/$1/METADECODER.COVERAGE \
+-s ./metadecoder/$1/METADECODER.SEED \
+-o ./metadecoder/$1/METADECODER
+
+
+#23 Binning by comebin
+
+/opt/comebin_env/bin/run_comebin.sh \
+-a ./Spades_assembly/$1/contigs.fasta \
+-p ./ -o ./comebin/$1/
+
+
+#24 Checkm2 for bins from SemiBin. Result is here: ./SemiBin/$1/output_bins/CheckM/quality_report.tsv
+
+gunzip ./SemiBin/$1/output_bins/*gz
+
+checkm2 predict \
+--input ./SemiBin/$1/output_bins/*.fa \
+--output-directory ./$1_semibin/output_bins/CheckM \
+--threads $2
+
+
+#25 Annotation by GTDB (version 226, 2025) on bins from SemiBin. Result is here: ./SemiBin/$1/output_bins/gtdb/classify/gtdbtk.bac120.summary.tsv
+
+gtdbtk classify_wf \
+--genome_dir ./SemiBin/$1/output_bins/ \
+--mash_db /opt/miniconda3/envs/gtdbtk241/share/gtdbtk-2.4.1/db/release226 \
+--out_dir ./SemiBin/$1/output_bins/gtdb \
+--cpus $2 \
+--extension fa
+
+
+#26 Checkm2 for bins from metadecoder. Result is here: ./metadecoder/$1/CheckM/quality_report.tsv
+
+checkm2 predict \
+--input ./metadecoder/$1/*.fasta \
+--output-directory ./metadecoder/$1/CheckM \
+--threads $2
+
+
+#27 Annotation by GTDB (version 226, 2025) on bins from metadecoder (step 13). Result is here: ./metadecoder/$1/gtdb/classify/gtdbtk.bac120.summary.tsv
+
+gtdbtk classify_wf --genome_dir ./$1_metadecoder/ \
+--mash_db /opt/miniconda3/envs/gtdbtk241/share/gtdbtk-2.4.1/db/release226 \
+--out_dir ./metadecoder/$1/gtdb \
+--cpus $2 \
+--extension fasta
+
+
+#28 Checkm2 for bins from comebin. Result is here: ./comebin/$1/comebin_res/comebin_res_bins/CheckM/quality_report.tsv
+
+checkm2 predict \
+--input ./comebin/$1/comebin_res/comebin_res_bins/*.fa \
+--output-directory ./comebin/$1/comebin_res/comebin_res_bins/CheckM \
+--threads $2
+
+
+#29 Annotation by GTDB (version 226, 2025) on bins from comebin. Result is here: ./comebin/$1/comebin_res/comebin_res_bins/gtdb/classify/gtdbtk.bac120.summary.tsv
+
+gtdbtk classify_wf --genome_dir ./comebin/$1/comebin_res/comebin_res_bins/ \
+--mash_db /opt/miniconda3/envs/gtdbtk241/share/gtdbtk-2.4.1/db/release226 \
+--out_dir ./comebin/$1/comebin_res/comebin_res_bins/gtdb \
+--cpus $2 \
+--extension fa
