@@ -29,8 +29,19 @@ fastqc -t 2 $1_R1_paired.fastq.gz $1_R2_paired.fastq.gz
 -m 1005 -t $2 -k 33,55,99
 
 #5. Quast
-/opt/quast/quast.py -t $2 -m 500 -l ./Spades_assembly/$1/contigs.fasta -o ./quast_results/$1 ./Spades_assembly/$1/contigs.fasta
-/opt/quast/quast.py -t $2 -m 5000 -l ./Spades_assembly/$1/contigs.fasta_5kb -o ./quast_results/$1_5kb ./Spades_assembly/$1/contigs.fasta
+/opt/quast/quast.py \
+-t $2 \
+-m 500 \
+-l ./Spades_assembly/$1/contigs.fasta \
+-o ./quast_results/$1 \
+./Spades_assembly/$1/contigs.fasta
+
+/opt/quast/quast.py \
+-t $2 \
+-m 5000 \
+-l ./Spades_assembly/$1/contigs.fasta_5kb \
+-o ./quast_results/$1_5kb \
+./Spades_assembly/$1/contigs.fasta
 
 #6. Filtration contigs by length >= 5kb
 python3 Select_contigs_by_length.py \
@@ -83,11 +94,33 @@ prokka \
 
 #11. Run Cas_effectors and Cas_proteins
 mkdir ./Cas_effectors/$1
-hmmsearch --tblout ./Cas_effectors/$1/$1_Cas9.txt -E 10e-3 --cpu 20 ./Cas_profiles/TIGR01865.1.HMM ./Annotation_prokka/$1/$1.faa
-hmmsearch --tblout ./Cas_effectors/$1/$1_Cas12.txt -E 10e-3 --cpu 20 ./Cas_profiles/TIGR04330.1.HMM ./Annotation_prokka/$1/$1.faa
 mkdir ./Cas_proteins
-python3 Read_hmmsearch_output_return_sequences.py -s ./Annotation_prokka/$1/$1.faa -m .k/Cas_effectors/$1/$1_Cas9.txt -e 0.001 -o ./Cas_proteins/$1_Cas9.fasta
-python3 Read_hmmsearch_output_return_sequences.py -s ./Annotation_prokka/$1/$1.faa -m ./Cas_effectors/$1/$1_Cas12.txt -e 0.001 -o .k/Cas_proteins/$1_Cas12.fasta
+
+hmmsearch \
+--tblout ./Cas_effectors/$1/$1_Cas9.txt \
+-E 10e-3 \
+--cpu $2 \
+./Cas_profiles/TIGR01865.1.HMM \
+./Annotation_prokka/$1/$1.faa
+
+hmmsearch \
+--tblout ./Cas_effectors/$1/$1_Cas12.txt \
+-E 10e-3 \
+--cpu $2 \
+./Cas_profiles/TIGR04330.1.HMM \
+./Annotation_prokka/$1/$1.faa
+
+python3 Read_hmmsearch_output_return_sequences.py \
+-s ./Annotation_prokka/$1/$1.faa \
+-m .k/Cas_effectors/$1/$1_Cas9.txt \
+-e 0.001 \
+-o ./Cas_proteins/$1_Cas9.fasta
+
+python3 Read_hmmsearch_output_return_sequences.py \
+-s ./Annotation_prokka/$1/$1.faa \
+-m ./Cas_effectors/$1/$1_Cas12.txt \
+-e 0.001 \
+-o .k/Cas_proteins/$1_Cas12.fasta
 
 #12.
 #13.
