@@ -10,15 +10,7 @@ fastqc -t $2 $1_1.fastq.gz $1_2.fastq.gz
 
 2. Filtration by trimmomatic
 
-java -jar /opt/Trimmomatic-0.39/trimmomatic-0.39.jar \
-PE \
--threads $2 \
--phred33 \
-$1_1.fastq.gz $1_2.fastq.gz \
-$1_R1_paired.fastq.gz $1_R1_unpaired.fastq.gz \
-$1_R2_paired.fastq.gz $1_R2_unpaired.fastq.gz \
-ILLUMINACLIP:/opt/Trimmomatic-0.39/adapters/All_adapters.fa:2:30:10 \
-LEADING:0 TRAILING:0 SLIDINGWINDOW:4:0 HEADCROP:0
+java -jar /opt/Trimmomatic-0.39/trimmomatic-0.39.jar PE -threads $2 -phred33 $1_1.fastq.gz $1_2.fastq.gz $1_R1_paired.fastq.gz $1_R1_unpaired.fastq.gz $1_R2_paired.fastq.gz $1_R2_unpaired.fastq.gz ILLUMINACLIP:/opt/Trimmomatic-0.39/adapters/All_adapters.fa:2:30:10 LEADING:0 TRAILING:0 SLIDINGWINDOW:4:0 HEADCROP:0
 
 3. Quality contol of filtered reads
 
