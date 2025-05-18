@@ -361,3 +361,7 @@ gtdbtk classify_wf --genome_dir ./comebin/$1/comebin_res/comebin_res_bins/ \
 --out_dir ./comebin/$1/comebin_res/comebin_res_bins/gtdb \
 --cpus $2 \
 --extension fa
+
+#30 Run abricate
+
+abricate --threads $2 --db ncbi ./Annotation_prokka/$1.gbk > ./abrucate/$1.tab
