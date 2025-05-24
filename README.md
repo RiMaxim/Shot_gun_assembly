@@ -1,4 +1,4 @@
-![Logo](Pipeline_.png)
+![Logo](Pipeline.png)
 
 # Pipeline
 ```
