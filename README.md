@@ -365,3 +365,13 @@ gtdbtk classify_wf --genome_dir ./comebin/$1/comebin_res/comebin_res_bins/ \
 #30 Run abricate
 
 abricate --threads $2 --db ncbi ./Annotation_prokka/$1.gbk > ./abrucate/$1.tab
+
+#31 Run genomad
+
+genomad end-to-end \
+--cleanup \
+--splits $2 \
+./Assembly_short_name_5000bp/$1.fasta \
+./genomad/ \
+/opt/miniconda3/envs/genomad/db/genomad_db
+
